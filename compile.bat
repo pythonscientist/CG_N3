@@ -1,1 +1,1 @@
-cl  /I freeglut /EHsc main.cpp boundingbox.cpp camera.cpp color.cpp mathdef.cpp point4d.cpp time.cpp transform.cpp
+cl  /I freeglut /EHsc main.cpp boundingbox.cpp camera.cpp color.cpp mathdef.cpp point4d.cpp time.cpp transform.cpp /link /SUBSYSTEM:CONSOLE

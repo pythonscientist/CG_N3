@@ -1,0 +1,17 @@
+diagrama de classes
+ducumentação (javadoc/doxygen)
+inserir poligonos
+remover poligonos
+selecionar vertice
+mover vertice
+remover vertice
+exibir rastro ao desenhar o poligonos
+desenhar poligono aberto ou fechado clicando na tela
+tocar a cor dos poligonos
+selecionar poligonos bbox primeiro
+selecionar poligonos scanline
+translação
+escala
+rotação
+adicionar filhos
+trsnformação global pai

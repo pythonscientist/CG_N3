@@ -37,6 +37,10 @@ namespace VART {
             unsigned char GetG() const { return rgba[1]; }
             unsigned char GetB() const { return rgba[2]; }
             unsigned char GetA() const { return rgba[3]; }
+			float GetR1f() const { return ((float)rgba[0])/255.0f; }
+            float GetG1f() const { return ((float)rgba[1])/255.0f; }
+            float GetB1f() const { return ((float)rgba[2])/255.0f; }
+            float GetA1f() const { return ((float)rgba[3])/255.0f; }
             void GetRGBA(unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a) const;
             /// Returns RGBA componts as a vector of floats.
             void Get(float rgbaVec[4]) const;
