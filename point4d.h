@@ -30,6 +30,7 @@ namespace VART {
             /// Creates the (0,0,0,1) point.
             Point4D();
             Point4D(const Point4D& point);
+            Point4D(const Point4D* point);
             Point4D(double x, double y, double z, double w = 1.0);
 
             Point4D operator-() const;

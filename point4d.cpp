@@ -27,6 +27,14 @@ VART::Point4D::Point4D(const VART::Point4D &point)
     vetCoord[3] = point.vetCoord[3];
 }
 
+VART::Point4D::Point4D(const VART::Point4D *point)
+{
+    vetCoord[0] = point->vetCoord[0];
+    vetCoord[1] = point->vetCoord[1];
+    vetCoord[2] = point->vetCoord[2];
+    vetCoord[3] = point->vetCoord[3];
+}
+
 VART::Point4D::Point4D(double x, double y, double z, double w)
 // w = 1 (point) by default (see constructor signature)
 {

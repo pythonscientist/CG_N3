@@ -7,6 +7,7 @@
 #include "point4d.h"
 #include "color.h"
 #include "transform.h"
+#include "mathdef.h"
 
 struct Limite {
 	double minX=999999, minY=999999, maxX=0, maxY=0;
@@ -27,8 +28,8 @@ struct ObjetoGrafico {
 			pontos.push_back(p);
 		}
 		
-		Limite limite = obterLimite();
-		bbox.SetBoundingBox(limite.minX, limite.minY, 0, limite.maxX, limite.maxY, 0);
+		transform.MakeIdentity();
+		updateBBox();
 		
 		std::cout << "novo objeto grafico em " << this << std::endl;
 		
@@ -37,23 +38,32 @@ struct ObjetoGrafico {
 	Limite obterLimite() {
 		Limite limite;
 		for (auto o : pontos) {
-			if (o->GetX() < limite.minX) {
-				limite.minX = o->GetX();
+
+			VART::Point4D r(o.get());
+			transform.ApplyTo(&r);
+
+			if (r.GetX() < limite.minX) {
+				limite.minX = r.GetX();
 			}
 			
-			if (o->GetY() < limite.minY) {
-				limite.minY = o->GetY();
+			if (r.GetY() < limite.minY) {
+				limite.minY = r.GetY();
 			}
 			
-			if (o->GetX() > limite.maxX) {
-				limite.maxX = o->GetX();
+			if (r.GetX() > limite.maxX) {
+				limite.maxX = r.GetX();
 			}
 			
-			if (o->GetY() > limite.maxY) {
-				limite.maxY = o->GetY();
+			if (r.GetY() > limite.maxY) {
+				limite.maxY = r.GetY();
 			}
 		}
 		return limite;
+	}
+
+	void updateBBox() {
+		Limite limite = obterLimite();
+		bbox.SetBoundingBox(limite.minX, limite.minY, 0, limite.maxX, limite.maxY, 0);
 	}
 	
 	int contaObjetosGraficos() {
@@ -67,6 +77,7 @@ struct ObjetoGrafico {
 	ObjetoGrafico* procuraObjetoXY(int x, int y) {
 		
 		ObjetoGrafico *objetoXY = nullptr;
+		updateBBox();
 		if (bbox.testPoint(VART::Point4D(x, y, 0, 1))) {
 				objetoXY = this;
 		} else {	
@@ -78,5 +89,91 @@ struct ObjetoGrafico {
 			}
 		}			
 		return objetoXY;
+	}
+
+	void moverCima(double n) {
+		VART::Transform t;
+		t.MakeIdentity();
+		t.MakeTranslation(0.0f, n, 0.0f);
+		transform = transform * t;
+		
+	}
+
+	void moverBaixo(double n) {
+		VART::Transform t;
+		t.MakeIdentity();
+		t.MakeTranslation(0.0f, -n, 0.0f);
+		transform = transform * t;
+	}
+
+	void moverEsquerda(double n) {
+		VART::Transform t;
+		t.MakeIdentity();
+		t.MakeTranslation(-n, 0.0f, 0.0f);
+		transform = transform * t;
+	}
+
+	void moverDireita(double n) {
+		VART::Transform t;
+		t.MakeIdentity();
+		t.MakeTranslation(n, 0.0f, 0.0f);
+		transform = transform * t;
+	}
+
+	void rotaciona(double n) {
+		VART::Transform t; //translação
+		VART::Transform r; // rotacao
+		VART::Transform i; // translação inversa
+		VART::Point4D pto = bbox.GetCenter();
+    
+		// rotacao em si
+		r.MakeZRotation(RAS_DEG_TO_RAD * n);
+    
+		// tranlacao inversa, voltando a posicao original
+		i.MakeTranslation(pto);
+    
+		// tranlacao para origem
+		pto = -pto;
+		t.MakeTranslation(pto);
+		
+		transform = transform * (i * (r * t));
+	}
+	
+	void escalaAmplia(double n) {
+		VART::Transform t; //translação
+		VART::Transform e; // escala
+		VART::Transform i; // translação inversa
+		VART::Point4D pto = bbox.GetCenter();
+
+		// escala em si
+		e.MakeScale(n, n, 0);
+
+		// tranlacao inversa, voltando a posicao original
+		i.MakeTranslation(pto);
+    
+		// tranlacao para origem
+		pto = -pto;
+		t.MakeTranslation(pto);
+    
+		transform = transform * (i * (e * t));
+	}
+	
+	void escalaReduz(double n) {
+		VART::Transform t; //translação
+		VART::Transform e; // escala
+		VART::Transform i; // translação inversa
+		VART::Point4D pto = bbox.GetCenter();
+
+		// escala em si
+		e.MakeScale(1.0f/n, 1.0f/n, 0);
+
+		// tranlacao inversa, voltando a posicao original
+		i.MakeTranslation(pto);
+    
+		// tranlacao para origem
+		pto = -pto;
+		t.MakeTranslation(pto);
+    
+		transform = transform * (i * (e * t));
 	}
 };

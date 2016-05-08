@@ -82,21 +82,27 @@ void desenhaObjetosGraficosEFilhos() {
 		
 		// desenha os filhos
 		for (auto y : x->objetosGraficos) {
+			glPushMatrix();
+		        glMultMatrixd(y->transform.GetData());
 			glColor3f(y->cor.GetR1f(), y->cor.GetG1f(), y->cor.GetB1f());
 			glBegin(GL_LINE_STRIP);
 				for (auto z : y->pontos) {
 					glVertex2f(z->GetX(), z->GetY());
 				}
 			glEnd();
+			glPopMatrix();
 		}
 		
 		// desenha o pai
+		glPushMatrix();
+		glMultMatrixd(x->transform.GetData());
 		glColor3f(x->cor.GetR1f(), x->cor.GetG1f(), x->cor.GetB1f());
 		glBegin(GL_LINE_STRIP);
 			for (auto z : x->pontos) {
 				glVertex2f(z->GetX(), z->GetY());
 			}
 		glEnd();
+		glPopMatrix();
 	}
 }
 
@@ -143,9 +149,33 @@ void teclaPressionada(unsigned char tecla, int x, int y) {
 		}
 		
 		std::cout << "Objetos graficos no mundo = " << mundo.contaObjetosGraficos() << std::endl;
-		
 		break;
+	case 'w': // move cima
+		if (objeto_selecionado != nullptr) {objeto_selecionado->moverCima(5);}
+	break;
+	case 's': // move baixo
+		if (objeto_selecionado != nullptr) {objeto_selecionado->moverBaixo(5);}
+	break;
+	case 'a': //move esquerda
+		if (objeto_selecionado != nullptr) {objeto_selecionado->moverEsquerda(5);}
+	break;
+	case 'd': // move direita
+		if (objeto_selecionado != nullptr) {objeto_selecionado->moverDireita(5);}
+	break;
+	case 'z': // amplia
+		if (objeto_selecionado != nullptr) {objeto_selecionado->escalaAmplia(1.05);}
+	break;
+	case 'x': // reduz
+		if (objeto_selecionado != nullptr) {objeto_selecionado->escalaReduz(1.05);}
+	break;
+	case 'c': // rotaciona esquerda
+		if (objeto_selecionado != nullptr) {objeto_selecionado->rotaciona(5);}
+	break;
+	case 'v': // roraciona direita
+		if (objeto_selecionado != nullptr) {objeto_selecionado->rotaciona(-5);}
+	break;
 	}
+
 	glutPostRedisplay();
 }
 
