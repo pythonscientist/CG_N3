@@ -109,7 +109,7 @@ void desenhaObjetosGraficosEFilhos() {
 void selecionaPoligonoClick(GLint x, GLint y) {
 	for (auto o : mundo.listaObjetosGraficos) {
 		ObjetoGrafico* objeto = o->procuraObjetoXY(x, y);
-		if (objeto != nullptr && pnpoly(objeto->pontos, (float)x, (float)y)) {
+		if (objeto != nullptr && pnpoly(objeto->pontos, objeto->transform, (float)x, (float)y)) {
 			objeto_selecionado = objeto;
 			return;
 		}

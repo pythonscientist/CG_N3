@@ -1,5 +1,5 @@
 diagrama de classes
-ducumentação (javadoc/doxygen)
+documentação (javadoc/doxygen)
 ----- inserir poligonos
 remover poligonos
 selecionar vertice
@@ -14,4 +14,4 @@ trocar a cor dos poligonos
 ----- escala
 ----- rotação
 adicionar filhos
-trasnformação global pai
+transformação global pai

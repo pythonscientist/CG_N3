@@ -10,7 +10,7 @@
 #include "mathdef.h"
 
 struct Limite {
-	double minX=999999, minY=999999, maxX=0, maxY=0;
+	double minX=999999, minY=999999, maxX=-999999, maxY=-999999;
 };
 
 struct ObjetoGrafico {
