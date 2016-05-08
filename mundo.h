@@ -10,8 +10,9 @@ struct Mundo {
 	std::list<std::shared_ptr<ObjetoGrafico>> listaObjetosGraficos;
 	
 	
-	void adicionarNovoObjetoGrafico(std::vector<VART::Point4D> pPoints) {
-			listaObjetosGraficos.push_back(std::shared_ptr<ObjetoGrafico>(new ObjetoGrafico(pPoints)));
+	void adicionarNovoObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPoints) {
+		
+		listaObjetosGraficos.push_back(std::shared_ptr<ObjetoGrafico>(new ObjetoGrafico(pPoints)));
 	}
 	
 	int contaObjetosGraficos() {

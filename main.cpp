@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include <GL/glut.h>
 #include <math.h>
@@ -7,6 +8,7 @@
 #include "constantes.h"
 #include "point4d.h"
 #include "mundo.h"
+#include "pnpoly.h"
 
 #define EDICAO 0
 #define MANIPULACAO 1
@@ -21,7 +23,7 @@ void desenhaSelecaoObjetoSelecionado();
 // fim funções
 
 GLint estado_atual = MANIPULACAO;
-std::vector<VART::Point4D> pontos_edicao;
+std::vector<std::shared_ptr<VART::Point4D>> pontos_edicao;
 Mundo mundo;
 ObjetoGrafico *objeto_selecionado = nullptr;
 
@@ -61,7 +63,7 @@ void desenhaVertices_pontosEdicao() {
 	glBegin(GL_LINE_STRIP);
 	glColor3f(0.0f, 0.0f, 0.0f);
 	for (auto x : pontos_edicao) {
-		glVertex2f(x.GetX(), x.GetY());
+		glVertex2f(x->GetX(), x->GetY());
 	}
 	glEnd();
 }
@@ -70,7 +72,7 @@ void desenhaPontos_pontosEdicao() {
 	glPointSize(5.0f);
 	glBegin(GL_POINTS);
 	for (auto x : pontos_edicao) {
-			glVertex2f(x.GetX(), x.GetY());
+			glVertex2f(x->GetX(), x->GetY());
 		}
 	glEnd();
 }
@@ -83,7 +85,7 @@ void desenhaObjetosGraficosEFilhos() {
 			glColor3f(y->cor.GetR1f(), y->cor.GetG1f(), y->cor.GetB1f());
 			glBegin(GL_LINE_STRIP);
 				for (auto z : y->pontos) {
-					glVertex2f(z.GetX(), z.GetY());
+					glVertex2f(z->GetX(), z->GetY());
 				}
 			glEnd();
 		}
@@ -92,7 +94,7 @@ void desenhaObjetosGraficosEFilhos() {
 		glColor3f(x->cor.GetR1f(), x->cor.GetG1f(), x->cor.GetB1f());
 		glBegin(GL_LINE_STRIP);
 			for (auto z : x->pontos) {
-				glVertex2f(z.GetX(), z.GetY());
+				glVertex2f(z->GetX(), z->GetY());
 			}
 		glEnd();
 	}
@@ -101,7 +103,7 @@ void desenhaObjetosGraficosEFilhos() {
 void selecionaPoligonoClick(GLint x, GLint y) {
 	for (auto o : mundo.listaObjetosGraficos) {
 		ObjetoGrafico* objeto = o->procuraObjetoXY(x, y);
-		if (objeto != nullptr) {
+		if (objeto != nullptr && pnpoly(objeto->pontos, (float)x, (float)y)) {
 			objeto_selecionado = objeto;
 			return;
 		}
@@ -169,7 +171,7 @@ void mouseEvento(GLint botao, GLint estado, GLint x, GLint y) {
 	 // a cada click devemos armazenar o ponto para criar um poligono
 	 if (estado == GLUT_DOWN) {
 		 if (estado_atual == EDICAO) {
-			pontos_edicao.push_back(VART::Point4D(nx, ny, 0, 1));
+			pontos_edicao.push_back(std::shared_ptr<VART::Point4D>(new VART::Point4D(nx, ny, 0, 1)));
 		 } else if (estado_atual == MANIPULACAO) {
 			 std::cout << "procurando objeto em x= " << nx << " y= " << ny << std::endl;
 			 selecionaPoligonoClick(nx, ny);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <list>
 #include <vector>
 #include <memory>
 
@@ -14,7 +13,7 @@ struct Limite {
 };
 
 struct ObjetoGrafico {
-	std::list<VART::Point4D> pontos;
+	std::vector<std::shared_ptr<VART::Point4D>> pontos;
 	VART::BoundingBox bbox;
 	VART::Color cor;
 	VART::Transform transform;
@@ -22,7 +21,7 @@ struct ObjetoGrafico {
 	
 	ObjetoGrafico() {};
 	
-	ObjetoGrafico(std::vector<VART::Point4D> pPontos) {
+	ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos) {
 		
 		for (auto p : pPontos) {
 			pontos.push_back(p);
@@ -38,20 +37,20 @@ struct ObjetoGrafico {
 	Limite obterLimite() {
 		Limite limite;
 		for (auto o : pontos) {
-			if (o.GetX() < limite.minX) {
-				limite.minX = o.GetX();
+			if (o->GetX() < limite.minX) {
+				limite.minX = o->GetX();
 			}
 			
-			if (o.GetY() < limite.minY) {
-				limite.minY = o.GetY();
+			if (o->GetY() < limite.minY) {
+				limite.minY = o->GetY();
 			}
 			
-			if (o.GetX() > limite.maxX) {
-				limite.maxX = o.GetX();
+			if (o->GetX() > limite.maxX) {
+				limite.maxX = o->GetX();
 			}
 			
-			if (o.GetY() > limite.maxY) {
-				limite.maxY = o.GetY();
+			if (o->GetY() > limite.maxY) {
+				limite.maxY = o->GetY();
 			}
 		}
 		return limite;
