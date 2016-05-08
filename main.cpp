@@ -174,6 +174,9 @@ void teclaPressionada(unsigned char tecla, int x, int y) {
 	case 'v': // roraciona direita
 		if (objeto_selecionado != nullptr) {objeto_selecionado->rotaciona(-5);}
 	break;
+	case 'q': // muda cor 
+		if (objeto_selecionado != nullptr) {objeto_selecionado->cor = VART::Color::RANDOM();}
+	break;
 	}
 
 	glutPostRedisplay();

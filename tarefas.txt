@@ -7,7 +7,7 @@ mover vertice
 remover vertice
 ----- exibir rastro ao desenhar o poligonos
 ----- desenhar poligono aberto ou fechado clicando na tela
-trocar a cor dos poligonos
+----- trocar a cor dos poligonos
 ----- selecionar poligonos bbox primeiro
 ----- selecionar poligonos pnpoly
 ----- translação
