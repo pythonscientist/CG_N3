@@ -260,6 +260,8 @@ bool VART::BoundingBox::testAABBAABB(VART::BoundingBox &b)
 
 bool VART::BoundingBox::testPoint( VART::Point4D p )
 {
+	std::cout << "Test point" << std::endl;
+	
     if (p.GetX() < smallerX)
         return false;
     if (p.GetX() > greaterX)

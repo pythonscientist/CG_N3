@@ -16,11 +16,14 @@ void desenhaVertices_pontosEdicao();
 void desenhaPontos_pontosEdicao();
 void criaNovoObjetoGrafico();
 void desenhaObjetosGraficosEFilhos();
+void selecionaPoligonoClick(GLint x, GLint y);
+void desenhaSelecaoObjetoSelecionado();
 // fim funções
 
 GLint estado_atual = MANIPULACAO;
 std::vector<VART::Point4D> pontos_edicao;
 Mundo mundo;
+ObjetoGrafico *objeto_selecionado = nullptr;
 
 GLint gJanelaPrincipal = 0;
 GLint janelaLargura = 400, janelaAltura = 400;
@@ -48,6 +51,8 @@ void exibicaoPrincipal(void) {
 	} else {
 		desenhaObjetosGraficosEFilhos();
 	}
+	
+	desenhaSelecaoObjetoSelecionado();
 	///////
 	glutSwapBuffers();
 }
@@ -74,21 +79,47 @@ void desenhaObjetosGraficosEFilhos() {
 	for (auto x : mundo.listaObjetosGraficos) {
 		
 		// desenha os filhos
-		for (auto y : x.objetosGraficos) {
-			glColor3f(y.cor.GetR1f(), y.cor.GetG1f(), y.cor.GetB1f());
+		for (auto y : x->objetosGraficos) {
+			glColor3f(y->cor.GetR1f(), y->cor.GetG1f(), y->cor.GetB1f());
 			glBegin(GL_LINE_STRIP);
-				for (auto z :y.pontos) {
+				for (auto z : y->pontos) {
 					glVertex2f(z.GetX(), z.GetY());
 				}
 			glEnd();
 		}
 		
 		// desenha o pai
-		glColor3f(x.cor.GetR1f(), x.cor.GetG1f(), x.cor.GetB1f());
+		glColor3f(x->cor.GetR1f(), x->cor.GetG1f(), x->cor.GetB1f());
 		glBegin(GL_LINE_STRIP);
-			for (auto z :x.pontos) {
+			for (auto z : x->pontos) {
 				glVertex2f(z.GetX(), z.GetY());
 			}
+		glEnd();
+	}
+}
+
+void selecionaPoligonoClick(GLint x, GLint y) {
+	for (auto o : mundo.listaObjetosGraficos) {
+		ObjetoGrafico* objeto = o->procuraObjetoXY(x, y);
+		if (objeto != nullptr) {
+			objeto_selecionado = objeto;
+			return;
+		}
+	}
+	objeto_selecionado = nullptr;
+}
+
+void desenhaSelecaoObjetoSelecionado() {
+	if (objeto_selecionado != nullptr) {
+		
+		Limite l = objeto_selecionado->obterLimite();
+		
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glBegin(GL_LINE_LOOP);
+			glVertex2f(l.minX, l.minY);
+			glVertex2f(l.minX, l.maxY);
+			glVertex2f(l.maxX, l.maxY);
+			glVertex2f(l.maxX, l.minY);
 		glEnd();
 	}
 }
@@ -136,8 +167,16 @@ void mouseEvento(GLint botao, GLint estado, GLint x, GLint y) {
 	 std::cout << "x = " << nx << " y = " << ny << std::endl;
 	 
 	 // a cada click devemos armazenar o ponto para criar um poligono
-	 if (estado == GLUT_DOWN && estado_atual == EDICAO) {
-        pontos_edicao.push_back(VART::Point4D(nx, ny, 0, 1));
+	 if (estado == GLUT_DOWN) {
+		 if (estado_atual == EDICAO) {
+			pontos_edicao.push_back(VART::Point4D(nx, ny, 0, 1));
+		 } else if (estado_atual == MANIPULACAO) {
+			 std::cout << "procurando objeto em x= " << nx << " y= " << ny << std::endl;
+			 selecionaPoligonoClick(nx, ny);
+			 if (objeto_selecionado != nullptr) {
+				 std::cout << "Objeto selecionado = " << objeto_selecionado << std::endl;
+			 }
+		 }
     }
 	
     glutPostRedisplay();
@@ -175,7 +214,7 @@ void redimensionaJanela(GLint w, GLint h){
 	janelaLargura =  w;
 	janelaAltura  =  h;
 	orthoLargura = ortho2D_maxX - ortho2D_minX;
-    orthoAltura  = ortho2D_maxY - ortho2D_minY;
+	orthoAltura  = ortho2D_maxY - ortho2D_minY;
 }
 
 int main(int argc, const char * argv[]) {

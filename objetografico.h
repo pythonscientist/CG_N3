@@ -2,6 +2,7 @@
 
 #include <list>
 #include <vector>
+#include <memory>
 
 #include "boundingbox.h"
 #include "point4d.h"
@@ -17,7 +18,7 @@ struct ObjetoGrafico {
 	VART::BoundingBox bbox;
 	VART::Color cor;
 	VART::Transform transform;
-	std::list<ObjetoGrafico> objetosGraficos;
+	std::list<std::shared_ptr<ObjetoGrafico>> objetosGraficos;
 	
 	ObjetoGrafico() {};
 	
@@ -29,6 +30,8 @@ struct ObjetoGrafico {
 		
 		Limite limite = obterLimite();
 		bbox.SetBoundingBox(limite.minX, limite.minY, 0, limite.maxX, limite.maxY, 0);
+		
+		std::cout << "novo objeto grafico em " << this << std::endl;
 		
 	}
 	
@@ -57,8 +60,24 @@ struct ObjetoGrafico {
 	int contaObjetosGraficos() {
 		int contagem = 0;
 		for (auto x : objetosGraficos) {
-			contagem += x.contaObjetosGraficos();			
+			contagem += x->contaObjetosGraficos();			
 		}
 		return contagem + objetosGraficos.size();
+	}
+	
+	ObjetoGrafico* procuraObjetoXY(int x, int y) {
+		
+		ObjetoGrafico *objetoXY = nullptr;
+		if (bbox.testPoint(VART::Point4D(x, y, 0, 1))) {
+				objetoXY = this;
+		} else {	
+			for (auto o : objetosGraficos) {
+				objetoXY = o->procuraObjetoXY(x, y);
+				if (objetoXY != nullptr) {
+					return objetoXY;
+				}
+			}
+		}			
+		return objetoXY;
 	}
 };

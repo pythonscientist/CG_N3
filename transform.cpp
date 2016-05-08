@@ -260,7 +260,7 @@ bool VART::Transform::HasNaN() const
 #ifdef __linux__
     for (int i=0; i < 16; ++i)
     {
-        if (isnan(matrix[i]))
+        if (std::isnan(matrix[i]))
             return true;
     }
 #endif
