@@ -28,6 +28,7 @@ void moveVerticeCima(double n);
 void moveVerticeBaixo(double n);
 void moveVerticeEsquerda(double n);
 void moveVerticeDireita(double n);
+void deletaVerticeSelecionado();
 // fim funções
 
 GLint estado_atual = MANIPULACAO;
@@ -38,7 +39,7 @@ ObjetoGrafico *objeto_selecionado = nullptr;
 // manipula o vertice selecionado
 VART::Point4D *vertice_selecionado = nullptr;
 ObjetoGrafico *vertice_selecionado_pai = nullptr;
-int veritice_selecionado_posicao = 0;
+int vertice_selecionado_posicao = 0;
 
 GLint gJanelaPrincipal = 0;
 GLint janelaLargura = 400, janelaAltura = 400;
@@ -168,7 +169,7 @@ void selecionaVerticeClick(GLint x, GLint y) {
 				distancia = point_dist;
 				vertice_selecionado = p;
 				vertice_selecionado_pai = o.get();
-				veritice_selecionado_posicao = i;
+				vertice_selecionado_posicao = i;
 				std::cout << "vertice foi selecionado em x=" << p->GetX() << " y= " << p->GetY() << std::endl;
 				count += 1;
 			}
@@ -179,7 +180,7 @@ void selecionaVerticeClick(GLint x, GLint y) {
 	if (count == 0) {
 		vertice_selecionado = nullptr;
 		vertice_selecionado_pai = nullptr;
-		veritice_selecionado_posicao = 0;
+		vertice_selecionado_posicao = 0;
 	}
 }
 
@@ -299,17 +300,20 @@ void teclaPressionada(unsigned char tecla, int x, int y) {
 	case 'r': // deleta poligono selecionado 
 		if (objeto_selecionado != nullptr) {deletaSelecionado();}
 	break;
-	case 'i': // deleta poligono selecionado 
+	case 'i': // move vertice selecionado cima 
 		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeCima(5);}
 	break;
-	case 'k': // deleta poligono selecionado 
+	case 'k': // move vertice selecionado baixo
 		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeBaixo(5);}
 	break;
-	case 'j': // deleta poligono selecionado 
+	case 'j': // move vertice selecionado esquerda
 		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeEsquerda(5);}
 	break;
-	case 'l': // deleta poligono selecionado 
+	case 'l': // move vertice selecionado direita
 		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeDireita(5);}
+	break;
+	case 'p': // deleta vertice selecionado
+		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {deletaVerticeSelecionado();}
 	break;
 	}
 
@@ -327,6 +331,15 @@ void moveVerticeEsquerda(double n) {
 }
 void moveVerticeDireita(double n) {
 	vertice_selecionado->SetX(vertice_selecionado->GetX()+n);
+}
+
+void deletaVerticeSelecionado() {
+	if (vertice_selecionado != nullptr) {
+		vertice_selecionado_pai->pontos.erase(vertice_selecionado_pai->pontos.begin()+vertice_selecionado_posicao);
+		vertice_selecionado = nullptr;
+		vertice_selecionado_pai = nullptr;
+		vertice_selecionado_posicao = 0;
+	}
 }
 
 void mouseEvento(GLint botao, GLint estado, GLint x, GLint y) {
