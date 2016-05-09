@@ -19,10 +19,11 @@ struct ObjetoGrafico {
 	VART::Color cor;
 	VART::Transform transform;
 	std::vector<std::shared_ptr<ObjetoGrafico>> objetosGraficos;
+	ObjetoGrafico *pai;
 	
 	ObjetoGrafico();
 	
-	ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos);
+	ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos, ObjetoGrafico *pai);
 	
 	Limite obterLimite();
 

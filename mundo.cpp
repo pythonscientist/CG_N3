@@ -7,13 +7,13 @@
 #include "point4d.h"
 
 void Mundo::adicionarNovoObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPoints) {
-	listaObjetosGraficos.push_back(std::shared_ptr<ObjetoGrafico>(new ObjetoGrafico(pPoints)));
+	objetosGraficos.push_back(std::shared_ptr<ObjetoGrafico>(new ObjetoGrafico(pPoints, nullptr)));
 }
 
 int Mundo::contaObjetosGraficos() {
 	int contagem = 0;
-	for (auto x : listaObjetosGraficos) {
+	for (auto x : objetosGraficos) {
 		contagem += x->contaObjetosGraficos();			
 	}
-	return contagem + listaObjetosGraficos.size();
+	return contagem + objetosGraficos.size();
 }

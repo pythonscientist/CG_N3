@@ -12,7 +12,7 @@
 
 ObjetoGrafico::ObjetoGrafico() {};
 
-ObjetoGrafico::ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos) {
+ObjetoGrafico::ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos, ObjetoGrafico *pai) {
 	
 	for (auto p : pPontos) {
 		pontos.push_back(p);
@@ -20,6 +20,7 @@ ObjetoGrafico::ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos
 	
 	transform.MakeIdentity();
 	updateBBox();
+	this->pai = pai;
 	
 	std::cout << "novo objeto grafico em " << this << std::endl;
 	
@@ -204,5 +205,5 @@ void ObjetoGrafico::escalaReduz(double n, VART::Point4D *p) {
 }
 
 void ObjetoGrafico::adicionarNovoObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPoints) {
-	objetosGraficos.push_back(std::shared_ptr<ObjetoGrafico>(new ObjetoGrafico(pPoints)));
+	objetosGraficos.push_back(std::shared_ptr<ObjetoGrafico>(new ObjetoGrafico(pPoints, this)));
 }

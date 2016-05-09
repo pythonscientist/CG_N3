@@ -16,10 +16,10 @@
 // funções
 void desenhaVertices_pontosEdicao();
 void desenhaPontos_pontosEdicao();
-void criaNovoObjetoGrafico();
 void desenhaObjetosGraficosEFilhos();
 void selecionaPoligonoClick(GLint x, GLint y);
 void desenhaSelecaoObjetoSelecionado();
+void deletaSelecionado();
 // fim funções
 
 GLint estado_atual = MANIPULACAO;
@@ -78,7 +78,7 @@ void desenhaPontos_pontosEdicao() {
 }
 
 void desenhaObjetosGraficosEFilhos() {
-	for (auto x : mundo.listaObjetosGraficos) {
+	for (auto x : mundo.objetosGraficos) {
 		
 		// desenha os filhos
 		for (auto y : x->objetosGraficos) {
@@ -107,7 +107,7 @@ void desenhaObjetosGraficosEFilhos() {
 }
 
 void selecionaPoligonoClick(GLint x, GLint y) {
-	for (auto o : mundo.listaObjetosGraficos) {
+	for (auto o : mundo.objetosGraficos) {
 		ObjetoGrafico* objeto = o->procuraObjetoXY(x, y);
 		if (objeto != nullptr && pnpoly(objeto->pontos, objeto->transform, (float)x, (float)y)) {
 			objeto_selecionado = objeto;
@@ -129,6 +129,30 @@ void desenhaSelecaoObjetoSelecionado() {
 			glVertex2f(l.maxX, l.maxY);
 			glVertex2f(l.maxX, l.minY);
 		glEnd();
+	}
+}
+
+void deletaSelecionado() {
+	if (objeto_selecionado != nullptr) {
+		ObjetoGrafico *pai = objeto_selecionado->pai;
+		if (pai == nullptr) {
+		for (int i=0; i < mundo.objetosGraficos.size(); i++) {
+			if (mundo.objetosGraficos[i].get() == objeto_selecionado) {
+				mundo.objetosGraficos.erase(mundo.objetosGraficos.begin()+i);
+				objeto_selecionado = nullptr;
+				break;
+			}
+		}
+			
+		} else {
+		for (int i=0; i < pai->objetosGraficos.size(); i++) {
+			if (pai->objetosGraficos[i].get() == objeto_selecionado) {
+				pai->objetosGraficos.erase(pai->objetosGraficos.begin()+i);
+				objeto_selecionado = nullptr;
+				break;
+			}
+		}
+		}
 	}
 }
 
@@ -180,6 +204,9 @@ void teclaPressionada(unsigned char tecla, int x, int y) {
 	break;
 	case 'q': // muda cor 
 		if (objeto_selecionado != nullptr) {objeto_selecionado->cor = VART::Color::RANDOM();}
+	break;
+	case 'r': // deleta poligono selecionado 
+		if (objeto_selecionado != nullptr) {deletaSelecionado();}
 	break;
 	}
 
