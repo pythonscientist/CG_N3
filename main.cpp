@@ -20,12 +20,21 @@ void desenhaObjetosGraficosEFilhos();
 void selecionaPoligonoClick(GLint x, GLint y);
 void desenhaSelecaoObjetoSelecionado();
 void deletaSelecionado();
+void selecionaVerticeClick(GLint x, GLint y);
+void desenhaVerticeSelecionado();
+void desenhaObjetosGraficosEFilhos_sem_transformacao();
+void desenhaSelecaoObjetoSelecionado_sem_transformacao();
 // fim funções
 
 GLint estado_atual = MANIPULACAO;
 std::vector<std::shared_ptr<VART::Point4D>> pontos_edicao;
 Mundo mundo;
 ObjetoGrafico *objeto_selecionado = nullptr;
+
+// manipula o vertice selecionado
+VART::Point4D *vertice_selecionado = nullptr;
+ObjetoGrafico *vertice_selecionado_pai = nullptr;
+int veritice_selecionado_posicao = 0;
 
 GLint gJanelaPrincipal = 0;
 GLint janelaLargura = 400, janelaAltura = 400;
@@ -48,13 +57,16 @@ void exibicaoPrincipal(void) {
 	SRU();
 	////////
 	if (estado_atual == EDICAO) {
-		desenhaVertices_pontosEdicao();
 		desenhaPontos_pontosEdicao();
+		desenhaVertices_pontosEdicao();
+		desenhaVerticeSelecionado();
+		desenhaObjetosGraficosEFilhos_sem_transformacao();
+		desenhaSelecaoObjetoSelecionado_sem_transformacao();
 	} else {
 		desenhaObjetosGraficosEFilhos();
+		desenhaSelecaoObjetoSelecionado();
 	}
 	
-	desenhaSelecaoObjetoSelecionado();
 	///////
 	glutSwapBuffers();
 }
@@ -106,6 +118,29 @@ void desenhaObjetosGraficosEFilhos() {
 	}
 }
 
+void desenhaObjetosGraficosEFilhos_sem_transformacao() {
+	for (auto x : mundo.objetosGraficos) {
+		
+		// desenha os filhos
+		for (auto y : x->objetosGraficos) {
+			glColor3f(y->cor.GetR1f(), y->cor.GetG1f(), y->cor.GetB1f());
+			glBegin(GL_LINE_STRIP);
+				for (auto z : y->pontos) {
+					glVertex2f(z->GetX(), z->GetY());
+				}
+			glEnd();
+		}
+		
+		// desenha o pai
+		glColor3f(x->cor.GetR1f(), x->cor.GetG1f(), x->cor.GetB1f());
+		glBegin(GL_LINE_STRIP);
+			for (auto z : x->pontos) {
+				glVertex2f(z->GetX(), z->GetY());
+			}
+		glEnd();
+	}
+}
+
 void selecionaPoligonoClick(GLint x, GLint y) {
 	for (auto o : mundo.objetosGraficos) {
 		ObjetoGrafico* objeto = o->procuraObjetoXY(x, y);
@@ -117,10 +152,62 @@ void selecionaPoligonoClick(GLint x, GLint y) {
 	objeto_selecionado = nullptr;
 }
 
+void selecionaVerticeClick(GLint x, GLint y) {
+	double distancia = 9999999;
+	int count = 0;
+	for (auto o : mundo.objetosGraficos) {
+		for (int i=0; i<o->pontos.size(); i++) {
+			auto p = o->pontos[i].get();
+			double point_dist = sqrt(pow((p->GetX()-x),2) + pow((p->GetY()-y),2));
+			std::cout << "distancia = " << point_dist << std::endl;
+			if (point_dist < distancia && point_dist < 10) {
+				distancia = point_dist;
+				vertice_selecionado = p;
+				vertice_selecionado_pai = o.get();
+				veritice_selecionado_posicao = i;
+				std::cout << "vertice foi selecionado em x=" << p->GetX() << " y= " << p->GetY() << std::endl;
+				count += 1;
+			}
+		}
+
+	}
+
+	if (count == 0) {
+		vertice_selecionado = nullptr;
+		vertice_selecionado_pai = nullptr;
+		veritice_selecionado_posicao = 0;
+	}
+}
+
+void desenhaVerticeSelecionado() {
+	if (vertice_selecionado != nullptr && vertice_selecionado_pai != nullptr) {
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glPointSize(5.0f);
+		glBegin(GL_POINTS);
+			glVertex2f(vertice_selecionado->GetX(), vertice_selecionado->GetY());
+		glEnd();
+	}
+}
+
 void desenhaSelecaoObjetoSelecionado() {
 	if (objeto_selecionado != nullptr) {
 		
 		Limite l = objeto_selecionado->obterLimite();
+		
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glBegin(GL_LINE_LOOP);
+			glVertex2f(l.minX, l.minY);
+			glVertex2f(l.minX, l.maxY);
+			glVertex2f(l.maxX, l.maxY);
+			glVertex2f(l.maxX, l.minY);
+		glEnd();
+	}
+}
+
+void desenhaSelecaoObjetoSelecionado_sem_transformacao() {
+	if (objeto_selecionado != nullptr) {
+		
+		Limite l = objeto_selecionado->obterLimite(false);
 		
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glBegin(GL_LINE_LOOP);
@@ -233,7 +320,7 @@ void mouseEvento(GLint botao, GLint estado, GLint x, GLint y) {
 	 std::cout << "x = " << nx << " y = " << ny << std::endl;
 	 
 	 // a cada click devemos armazenar o ponto para criar um poligono
-	 if (estado == GLUT_DOWN) {
+	 if (botao == GLUT_LEFT_BUTTON && estado == GLUT_DOWN) {
 		 if (estado_atual == EDICAO) {
 			pontos_edicao.push_back(std::shared_ptr<VART::Point4D>(new VART::Point4D(nx, ny, 0, 1)));
 		 } else if (estado_atual == MANIPULACAO) {
@@ -243,7 +330,11 @@ void mouseEvento(GLint botao, GLint estado, GLint x, GLint y) {
 				 std::cout << "Objeto selecionado = " << objeto_selecionado << std::endl;
 			 }
 		 }
-    }
+    	} else if (botao == GLUT_RIGHT_BUTTON && estado == GLUT_DOWN) {
+		if (estado_atual == EDICAO) {
+			selecionaVerticeClick(nx, ny);
+		}
+	}
 	
     glutPostRedisplay();
 }

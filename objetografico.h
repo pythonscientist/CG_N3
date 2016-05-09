@@ -25,7 +25,7 @@ struct ObjetoGrafico {
 	
 	ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos, ObjetoGrafico *pai);
 	
-	Limite obterLimite();
+	Limite obterLimite(bool transform_points=true);
 
 	void updateBBox();
 	

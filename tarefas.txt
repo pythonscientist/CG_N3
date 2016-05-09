@@ -1,8 +1,8 @@
 diagrama de classes
 documentação (javadoc/doxygen)
 ----- inserir poligonos
-remover poligonos
-selecionar vertice
+----- remover poligonos
+----- selecionar vertice
 mover vertice
 remover vertice
 ----- exibir rastro ao desenhar o poligonos

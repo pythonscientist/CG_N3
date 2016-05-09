@@ -26,12 +26,13 @@ ObjetoGrafico::ObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPontos
 	
 }
 
-Limite ObjetoGrafico::obterLimite() {
+Limite ObjetoGrafico::obterLimite(bool transform_points) {
 	Limite limite;
 	for (auto o : pontos) {
 
 		VART::Point4D r(o.get());
-		transform.ApplyTo(&r);
+		if (transform_points)
+			transform.ApplyTo(&r);
 
 		if (r.GetX() < limite.minX) {
 			limite.minX = r.GetX();
