@@ -13,5 +13,5 @@ remover vertice
 ----- translação
 ----- escala
 ----- rotação
-adicionar filhos
-transformação global pai
+----- adicionar filhos
+----- transformação global pai

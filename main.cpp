@@ -144,7 +144,11 @@ void teclaPressionada(unsigned char tecla, int x, int y) {
 		std::cout << "Manipulacao" << std::endl;
 		
 		if (pontos_edicao.size() > 0) {
-			mundo.adicionarNovoObjetoGrafico(pontos_edicao);
+			if (objeto_selecionado == nullptr) {
+				mundo.adicionarNovoObjetoGrafico(pontos_edicao);
+			} else {
+				objeto_selecionado->adicionarNovoObjetoGrafico(pontos_edicao);
+			}
 			pontos_edicao.clear();
 		}
 		

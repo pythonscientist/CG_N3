@@ -18,7 +18,7 @@ struct ObjetoGrafico {
 	VART::BoundingBox bbox;
 	VART::Color cor;
 	VART::Transform transform;
-	std::list<std::shared_ptr<ObjetoGrafico>> objetosGraficos;
+	std::vector<std::shared_ptr<ObjetoGrafico>> objetosGraficos;
 	
 	ObjetoGrafico() {};
 	
@@ -96,6 +96,10 @@ struct ObjetoGrafico {
 		t.MakeIdentity();
 		t.MakeTranslation(0.0f, n, 0.0f);
 		transform = transform * t;
+
+		for (auto o : objetosGraficos) {
+			o->moverCima(n);
+		}
 		
 	}
 
@@ -104,6 +108,10 @@ struct ObjetoGrafico {
 		t.MakeIdentity();
 		t.MakeTranslation(0.0f, -n, 0.0f);
 		transform = transform * t;
+		
+		for (auto o : objetosGraficos) {
+			o->moverBaixo(n);
+		}
 	}
 
 	void moverEsquerda(double n) {
@@ -111,6 +119,10 @@ struct ObjetoGrafico {
 		t.MakeIdentity();
 		t.MakeTranslation(-n, 0.0f, 0.0f);
 		transform = transform * t;
+		
+		for (auto o : objetosGraficos) {
+			o->moverEsquerda(n);
+		}
 	}
 
 	void moverDireita(double n) {
@@ -118,13 +130,20 @@ struct ObjetoGrafico {
 		t.MakeIdentity();
 		t.MakeTranslation(n, 0.0f, 0.0f);
 		transform = transform * t;
+		
+		for (auto o : objetosGraficos) {
+			o->moverDireita(n);
+		}
 	}
 
-	void rotaciona(double n) {
+	void rotaciona(double n, VART::Point4D *p=nullptr) {
 		VART::Transform t; //translação
 		VART::Transform r; // rotacao
 		VART::Transform i; // translação inversa
 		VART::Point4D pto = bbox.GetCenter();
+		if (p != nullptr && 0) {
+			pto = VART::Point4D(p);
+		}
     
 		// rotacao em si
 		r.MakeZRotation(RAS_DEG_TO_RAD * n);
@@ -137,13 +156,20 @@ struct ObjetoGrafico {
 		t.MakeTranslation(pto);
 		
 		transform = transform * (i * (r * t));
+		
+		for (auto o : objetosGraficos) {
+			o->rotaciona(n, &pto);
+		}
 	}
 	
-	void escalaAmplia(double n) {
+	void escalaAmplia(double n, VART::Point4D *p=nullptr) {
 		VART::Transform t; //translação
 		VART::Transform e; // escala
 		VART::Transform i; // translação inversa
 		VART::Point4D pto = bbox.GetCenter();
+		if (p != nullptr) {
+			pto = VART::Point4D(p);
+		}
 
 		// escala em si
 		e.MakeScale(n, n, 0);
@@ -156,13 +182,20 @@ struct ObjetoGrafico {
 		t.MakeTranslation(pto);
     
 		transform = transform * (i * (e * t));
+		
+		for (auto o : objetosGraficos) {
+			o->escalaAmplia(n, &pto);
+		}
 	}
 	
-	void escalaReduz(double n) {
+	void escalaReduz(double n, VART::Point4D *p=nullptr) {
 		VART::Transform t; //translação
 		VART::Transform e; // escala
 		VART::Transform i; // translação inversa
 		VART::Point4D pto = bbox.GetCenter();
+		if (p != nullptr) {
+			pto = VART::Point4D(p);
+		}
 
 		// escala em si
 		e.MakeScale(1.0f/n, 1.0f/n, 0);
@@ -175,5 +208,12 @@ struct ObjetoGrafico {
 		t.MakeTranslation(pto);
     
 		transform = transform * (i * (e * t));
+		for (auto o : objetosGraficos) {
+			o->escalaReduz(n, &pto);
+		}
+	}
+	
+	void adicionarNovoObjetoGrafico(std::vector<std::shared_ptr<VART::Point4D>> pPoints) {
+		objetosGraficos.push_back(std::shared_ptr<ObjetoGrafico>(new ObjetoGrafico(pPoints)));
 	}
 };
