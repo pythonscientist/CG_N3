@@ -24,6 +24,10 @@ void selecionaVerticeClick(GLint x, GLint y);
 void desenhaVerticeSelecionado();
 void desenhaObjetosGraficosEFilhos_sem_transformacao();
 void desenhaSelecaoObjetoSelecionado_sem_transformacao();
+void moveVerticeCima(double n);
+void moveVerticeBaixo(double n);
+void moveVerticeEsquerda(double n);
+void moveVerticeDireita(double n);
 // fim funções
 
 GLint estado_atual = MANIPULACAO;
@@ -295,9 +299,34 @@ void teclaPressionada(unsigned char tecla, int x, int y) {
 	case 'r': // deleta poligono selecionado 
 		if (objeto_selecionado != nullptr) {deletaSelecionado();}
 	break;
+	case 'i': // deleta poligono selecionado 
+		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeCima(5);}
+	break;
+	case 'k': // deleta poligono selecionado 
+		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeBaixo(5);}
+	break;
+	case 'j': // deleta poligono selecionado 
+		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeEsquerda(5);}
+	break;
+	case 'l': // deleta poligono selecionado 
+		if (vertice_selecionado != nullptr && estado_atual == EDICAO) {moveVerticeDireita(5);}
+	break;
 	}
 
 	glutPostRedisplay();
+}
+
+void moveVerticeCima(double n) {
+	vertice_selecionado->SetY(vertice_selecionado->GetY()+n);
+}
+void moveVerticeBaixo(double n) {
+	vertice_selecionado->SetY(vertice_selecionado->GetY()-n);
+}
+void moveVerticeEsquerda(double n) {
+	vertice_selecionado->SetX(vertice_selecionado->GetX()-n);
+}
+void moveVerticeDireita(double n) {
+	vertice_selecionado->SetX(vertice_selecionado->GetX()+n);
 }
 
 void mouseEvento(GLint botao, GLint estado, GLint x, GLint y) {
