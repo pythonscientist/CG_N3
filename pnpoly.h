@@ -4,6 +4,11 @@
 #include <memory>
 #include "point4d.h"
 
+/// \brief realiza a verificação se um ponto está dentro de um polígono seja ele convexo ou côncavo
+/// \param points pontos do polígono
+/// \param transformação do polígono
+/// \param testx posição X do ponto
+/// \param testy posição Y do ponto 
 int pnpoly(std::vector<std::shared_ptr<VART::Point4D>> points, VART::Transform &transform, float testx, float testy)
 {
 	unsigned int i, j, c = 0;
@@ -26,5 +31,5 @@ int pnpoly(std::vector<std::shared_ptr<VART::Point4D>> points, VART::Transform &
 			c = !c;
 		}
 	}
-  return c;
+	return c;
 }

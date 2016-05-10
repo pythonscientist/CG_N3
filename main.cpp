@@ -1,3 +1,5 @@
+#include "main.h"
+
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -12,24 +14,6 @@
 
 #define EDICAO 0
 #define MANIPULACAO 1
-
-// funções
-void desenhaVertices_pontosEdicao();
-void desenhaPontos_pontosEdicao();
-void desenhaObjetosGraficosEFilhos();
-void selecionaPoligonoClick(GLint x, GLint y);
-void desenhaSelecaoObjetoSelecionado();
-void deletaSelecionado();
-void selecionaVerticeClick(GLint x, GLint y);
-void desenhaVerticeSelecionado();
-void desenhaObjetosGraficosEFilhos_sem_transformacao();
-void desenhaSelecaoObjetoSelecionado_sem_transformacao();
-void moveVerticeCima(double n);
-void moveVerticeBaixo(double n);
-void moveVerticeEsquerda(double n);
-void moveVerticeDireita(double n);
-void deletaVerticeSelecionado();
-// fim funções
 
 GLint estado_atual = MANIPULACAO;
 std::vector<std::shared_ptr<VART::Point4D>> pontos_edicao;
